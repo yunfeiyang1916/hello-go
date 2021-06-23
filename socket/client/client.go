@@ -4,42 +4,30 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"strings"
+	"time"
 )
 
 func main() {
-	//tcpClient()
-	udpClient()
+	tcpClient()
+	//udpClient()
 }
 
 //tcp客户端
 func tcpClient() {
-	service := "127.0.0.1:7777"
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", service)
-	checkError(err)
-	conn, err := net.DialTCP("tcp4", nil, tcpAddr)
-	checkError(err)
-	_, err = conn.Write([]byte("HEAD /HTTP/1.0\r\n\r\n"))
-	checkError(err)
-	defer conn.Close()
-	inputReader := bufio.NewReader(os.Stdin)
-	fmt.Println("客户端名称：")
-	clientName, _ := inputReader.ReadString('\n')
-	//去除\r\n
-	trimmedClient := strings.Trim(clientName, "\r\n")
-	_, err = conn.Write([]byte(trimmedClient))
-	checkError(err)
-	for {
-		fmt.Println("请输入：")
-		input, _ := inputReader.ReadString('\n')
-		//去除\r\n
-		trimmedInput := strings.Trim(input, "\r\n")
-		if strings.ToUpper(trimmedInput) == "Q" {
-			return
+	fmt.Println("startTime=", time.Now())
+	for i := 1; i < 2; i++ {
+		conn, err := net.Dial("tcp", "127.0.0.1:8883")
+		if err != nil {
+			log.Printf("%d net.Dial error,err=%s \n", i, err)
+			continue
 		}
-		conn.Write([]byte(trimmedClient + " 发送消息：" + trimmedInput))
+		log.Println(i, ":connect to server ok")
+		fmt.Println(conn.Write([]byte("你好")))
+		//conn.Close()
 	}
 }
 

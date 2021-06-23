@@ -157,6 +157,12 @@ func readLine() {
 	fmt.Println(i)
 }
 
+// 创建目录
+func mkdir() {
+	err := os.MkdirAll("logs", 0777)
+	fmt.Println(err)
+}
+
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
@@ -172,5 +178,6 @@ func main() {
 	//complexRead()
 	//shareFile1()
 	//template.HTMLEscapeString("s")
-	readLine()
+	//readLine()
+	mkdir()
 }
