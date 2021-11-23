@@ -10,9 +10,33 @@ import (
 
 func main() {
 	//cancelContext()
+	//cancelContext2()
 	//deadlineContext()
-	//timeoutContext()
-	cancelWithValueContext()
+	timeoutContext()
+	//cancelWithValueContext()
+}
+
+// 取消上下文2
+func cancelContext2() {
+	pCtx, cancel := context.WithCancel(context.Background())
+	ctx1, cancel1 := context.WithCancel(pCtx)
+	ctx2, cancel2 := context.WithCancel(ctx1)
+	go watch(pCtx, "[监控顶层上下文]")
+	go watch(ctx1, "[监控子上下文1]")
+	go watch(ctx2, "[监控子上下文2]")
+
+	bytes := make([]byte, 1)
+	//读取任意字符取消
+	os.Stdin.Read(bytes)
+	fmt.Println("输入：", string(bytes))
+	//发出取消信息
+	cancel()
+	cancel1()
+	cancel2()
+	//cancel()
+	//休眠5秒，检测监控是否停止，如果没有监控输出，就表示停止了
+	time.Sleep(5 * time.Second)
+	fmt.Println("主程序退出")
 }
 
 //取消上下文
